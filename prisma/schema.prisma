@@ -1,0 +1,27 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Band {
+  id      String @id @default(cuid())
+  from    Int
+  to      Int
+  spacing Int
+}
+
+model Frequency {
+  id     String @id @default(cuid())
+  val    Int    @unique
+  userId String
+
+  @@index([userId])
+  @@index([val])
+}
