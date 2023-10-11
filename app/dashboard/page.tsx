@@ -48,7 +48,7 @@ export default async function Page() {
                 <TableCell>{band.to} Hz</TableCell>
                 <TableCell>{band.spacing} Hz</TableCell>
                 <TableCell className='text-right'>
-                  <MenuItem />
+                  <MenuItem id={band.id} />
                 </TableCell>
               </TableRow>
             ))}

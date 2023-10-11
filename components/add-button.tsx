@@ -84,7 +84,7 @@ export default function AddButton() {
         <DialogHeader>
           <DialogTitle>Create New Band</DialogTitle>
           <DialogDescription>
-            Add a new frequency band here. Click save when you&apos;re done.
+            Add a new frequency band here. Click submit when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
