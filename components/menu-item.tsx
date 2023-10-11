@@ -4,6 +4,7 @@ import { FC, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Band } from '@prisma/client';
 import axios, { AxiosError } from 'axios';
 import { Loader2, MoreHorizontal } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -41,23 +42,19 @@ import { Input } from './ui/input';
 
 type BandFormValues = z.infer<typeof bandSchema>;
 
-const defaultValues: Partial<BandFormValues> = {
-  from: 0,
-  to: 0,
-  spacing: 0,
-};
-
-interface MenuItemProps {
-  id: string;
-}
-
-const MenuItem: FC<MenuItemProps> = ({ id }) => {
+const MenuItem: FC<Band> = ({ id, from, to, spacing }) => {
   const [hydrated, setHydrated] = useState<boolean>(false);
   const [menuItem, setMenuItem] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
   const { user } = useUser();
+
+  const defaultValues: Partial<BandFormValues> = {
+    from: from,
+    to: to,
+    spacing: spacing,
+  };
 
   const form = useForm<BandFormValues>({
     resolver: zodResolver(bandSchema),
@@ -77,7 +74,28 @@ const MenuItem: FC<MenuItemProps> = ({ id }) => {
     );
   }
 
-  async function onSubmit(data: BandFormValues) {}
+  async function onSubmit(data: BandFormValues) {
+    setIsLoading(true);
+    try {
+      await axios.patch(`/api/bands/${id}`, data);
+
+      toast.success('Band updated successfully');
+      setOpen(false);
+      router.refresh();
+    } catch (error) {
+      console.log(error);
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 401) {
+          return toast.error('You are not authorized to update a band');
+        }
+
+        return toast.error(error.response?.data);
+      }
+      toast.error('Something went wrong');
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   async function handleOnDelete() {
     setIsLoading(true);
@@ -90,7 +108,7 @@ const MenuItem: FC<MenuItemProps> = ({ id }) => {
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.response?.status === 401) {
-          return toast.error('You are not authorized to add a band');
+          return toast.error('You are not authorized to delete a band');
         }
 
         return toast.error(error.response?.data);
