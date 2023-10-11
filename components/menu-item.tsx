@@ -21,16 +21,12 @@ export default function MenuItem() {
     setHydrated(true);
   }, []);
 
-  if (!hydrated) {
+  if (!hydrated || !user) {
     return (
       <Button variant='ghost' size='icon' className='hover:bg-neutral-200'>
         <MoreHorizontal className='h-4 w-4 stroke-gray-700' />
       </Button>
     );
-  }
-
-  if (!user) {
-    return null;
   }
 
   return (
