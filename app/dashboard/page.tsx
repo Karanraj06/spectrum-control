@@ -1,7 +1,6 @@
-import { MoreHorizontal } from 'lucide-react';
+import { currentUser } from '@clerk/nextjs';
 
 import { db } from '@/lib/db';
-import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -12,17 +11,24 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import AddButton from '@/components/add-button';
+import MenuItem from '@/components/menu-item';
 import UserNav from '@/components/user-nav';
 import Wrapper from '@/components/wrapper';
 
 export default async function Page() {
+  const user = await currentUser();
+
+  if (!user) {
+    return null;
+  }
+
   const bands = await db.band.findMany();
 
   return (
     <>
       <UserNav />
       <Wrapper>
-        <AddButton />
+        {user?.publicMetadata?.role === 'admin' && <AddButton />}
         <Table>
           <TableCaption>A list of available bands.</TableCaption>
           <TableHeader>
@@ -31,7 +37,7 @@ export default async function Page() {
               <TableHead>Frequency Range (From)</TableHead>
               <TableHead>Frequency Range (To)</TableHead>
               <TableHead>Channel Spacing</TableHead>
-              <TableHead className='text-right'>Generate Frequencies</TableHead>
+              <TableHead className='text-right'></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -42,13 +48,7 @@ export default async function Page() {
                 <TableCell>{band.to} Hz</TableCell>
                 <TableCell>{band.spacing} Hz</TableCell>
                 <TableCell className='text-right'>
-                  <Button
-                    variant='ghost'
-                    size='icon'
-                    className='hover:bg-neutral-200'
-                  >
-                    <MoreHorizontal className='h-4 w-4 stroke-gray-700' />
-                  </Button>
+                  <MenuItem />
                 </TableCell>
               </TableRow>
             ))}
