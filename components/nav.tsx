@@ -14,7 +14,7 @@ export default function Navbar() {
           <Link href='/' className='z-40 flex font-semibold'>
             <span>spectrum-control</span>
           </Link>
-          <div className='hidden items-center space-x-4 sm:flex'>
+          <div className='flex items-center space-x-4'>
             <Link
               href='/'
               className={buttonVariants({
