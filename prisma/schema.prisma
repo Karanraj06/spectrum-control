@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model Band {
@@ -15,13 +16,5 @@ model Band {
   from    Int
   to      Int
   spacing Int
-}
-
-model Frequency {
-  id     String @id @default(cuid())
-  val    Int    @unique
-  userId String
-
-  @@index([userId])
-  @@index([val])
+  name    String
 }

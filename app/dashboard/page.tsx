@@ -30,34 +30,43 @@ export default async function Page() {
       <Wrapper>
         {user?.publicMetadata?.role === 'admin' && <AddButton />}
         <Table>
-          <TableCaption>A list of available bands.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Serial Number</TableHead>
-              <TableHead>Frequency Range (From)</TableHead>
-              <TableHead>Frequency Range (To)</TableHead>
-              <TableHead>Channel Spacing</TableHead>
-              <TableHead className='text-right'></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {bands.map((band, idx) => (
-              <TableRow key={band.id}>
-                <TableCell className='font-medium'>{idx + 1}</TableCell>
-                <TableCell>{band.from} Hz</TableCell>
-                <TableCell>{band.to} Hz</TableCell>
-                <TableCell>{band.spacing} Hz</TableCell>
-                <TableCell className='text-right'>
-                  <MenuItem
-                    id={band.id}
-                    from={band.from}
-                    to={band.to}
-                    spacing={band.spacing}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
+          {bands.length === 0 ? (
+            <TableCaption>There are no bands to show.</TableCaption>
+          ) : (
+            <>
+              <TableCaption>A list of available bands.</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Serial Number</TableHead>
+                  <TableHead>Band Name</TableHead>
+                  <TableHead>Frequency Range (From)</TableHead>
+                  <TableHead>Frequency Range (To)</TableHead>
+                  <TableHead>Channel Spacing</TableHead>
+                  <TableHead className='text-right'></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {bands.map((band, idx) => (
+                  <TableRow key={band.id}>
+                    <TableCell className='font-medium'>{idx + 1}</TableCell>
+                    <TableCell>{band.name}</TableCell>
+                    <TableCell>{band.from / 1000000} MHz</TableCell>
+                    <TableCell>{band.to / 1000000} MHz</TableCell>
+                    <TableCell>{band.spacing / 1000} kHz</TableCell>
+                    <TableCell className='text-right'>
+                      <MenuItem
+                        id={band.id}
+                        from={band.from}
+                        to={band.to}
+                        spacing={band.spacing}
+                        name={band.name}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>{' '}
+            </>
+          )}
         </Table>
       </Wrapper>
     </>

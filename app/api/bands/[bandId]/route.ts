@@ -3,7 +3,27 @@ import { currentUser } from '@clerk/nextjs';
 import * as z from 'zod';
 
 import { db } from '@/lib/db';
-import { bandSchema } from '@/lib/validators/band';
+
+// For server, assuming from, to, spacing in Hz
+const bandSchema = z
+  .object({
+    from: z.coerce.number(),
+    to: z.coerce.number(),
+    spacing: z.coerce.number(),
+    name: z.string(),
+  })
+  .refine((data) => data.from < data.to, {
+    message: '(From) must be less than (To)',
+    path: ['from'],
+  })
+  .refine((data) => data.from < data.to, {
+    message: '(From) must be less than (To)',
+    path: ['to'],
+  })
+  .refine((data) => data.spacing < data.to - data.from, {
+    message: '(Spacing) must be less than (To - From)',
+    path: ['spacing'],
+  });
 
 const routeContextSchema = z.object({
   params: z.object({
@@ -51,16 +71,12 @@ export async function PATCH(
   const data = await request.json();
 
   try {
-    const { from, to, spacing } = bandSchema.parse(data);
+    const { from, to, spacing, name } = bandSchema.parse(data);
     const { params } = routeContextSchema.parse(context);
-
-    if (from >= to || spacing >= to - from) {
-      return new NextResponse('Invalid band parameters', { status: 400 });
-    }
 
     const band = await db.band.update({
       where: { id: params.bandId },
-      data: { from, to, spacing },
+      data: { from, to, spacing, name },
     });
 
     return NextResponse.json(band);

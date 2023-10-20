@@ -32,17 +32,25 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 import { Input } from './ui/input';
 
 type BandFormValues = z.infer<typeof bandSchema>;
 
-const MenuItem: FC<Band> = ({ id, from, to, spacing }) => {
+const MenuItem: FC<Band> = ({ id, from, to, spacing, name }) => {
   const [hydrated, setHydrated] = useState<boolean>(false);
   const [menuItem, setMenuItem] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
@@ -51,9 +59,10 @@ const MenuItem: FC<Band> = ({ id, from, to, spacing }) => {
   const { user } = useUser();
 
   const defaultValues: Partial<BandFormValues> = {
-    from: from,
-    to: to,
-    spacing: spacing,
+    from: from / 1000000,
+    to: to / 1000000,
+    spacing: spacing / 1000,
+    name: name,
   };
 
   const form = useForm<BandFormValues>({
@@ -77,7 +86,12 @@ const MenuItem: FC<Band> = ({ id, from, to, spacing }) => {
   async function onSubmit(data: BandFormValues) {
     setIsLoading(true);
     try {
-      await axios.patch(`/api/bands/${id}`, data);
+      await axios.patch(`/api/bands/${id}`, {
+        from: data.from * 1000000,
+        to: data.to * 1000000,
+        spacing: data.spacing * 1000,
+        name: data.name,
+      });
 
       toast.success('Band updated successfully');
       setOpen(false);
@@ -149,7 +163,7 @@ const MenuItem: FC<Band> = ({ id, from, to, spacing }) => {
       {menuItem === 'delete' && (
         <DialogContent className='sm:max-w-[425px]'>
           <DialogHeader>
-            <DialogTitle>Are you sure absolutely sure?</DialogTitle>
+            <DialogTitle>Are you absolutely sure?</DialogTitle>
             <DialogDescription>
               This action cannot be undone. Are you sure you want to permanently
               delete this band from our servers?
@@ -188,8 +202,11 @@ const MenuItem: FC<Band> = ({ id, from, to, spacing }) => {
                   <FormItem>
                     <FormLabel>Frequency Range (From)</FormLabel>
                     <FormControl>
-                      <Input type='number' placeholder='from' {...field} />
+                      <Input type='number' placeholder='From' {...field} />
                     </FormControl>
+                    <FormDescription>
+                      Enter the start frequency of the band in MHz
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -201,8 +218,11 @@ const MenuItem: FC<Band> = ({ id, from, to, spacing }) => {
                   <FormItem>
                     <FormLabel>Frequency Range (To)</FormLabel>
                     <FormControl>
-                      <Input type='number' placeholder='to' {...field} />
+                      <Input type='number' placeholder='To' {...field} />
                     </FormControl>
+                    <FormDescription>
+                      Enter the end frequency of the band in MHz
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -214,8 +234,38 @@ const MenuItem: FC<Band> = ({ id, from, to, spacing }) => {
                   <FormItem>
                     <FormLabel>Channel Spacing</FormLabel>
                     <FormControl>
-                      <Input type='number' placeholder='spacing' {...field} />
+                      <Input type='number' placeholder='Spacing' {...field} />
                     </FormControl>
+                    <FormDescription>
+                      Enter the channel spacing in kHz
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='name'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Band Name</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder='Select a band name to display' />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value='VHF'>VHF</SelectItem>
+                        <SelectItem value='HF'>HF</SelectItem>
+                        <SelectItem value='UHF - I'>UHF - I</SelectItem>
+                        <SelectItem value='UHF - II'>UHF - II</SelectItem>
+                        <SelectItem value='UHF - III'>UHF - III</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

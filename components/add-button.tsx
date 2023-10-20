@@ -23,11 +23,19 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 import { Input } from './ui/input';
 
@@ -53,7 +61,12 @@ export default function AddButton() {
   async function onSubmit(data: BandFormValues) {
     setIsLoading(true);
     try {
-      await axios.post('/api/bands', data);
+      await axios.post('/api/bands', {
+        from: data.from * 1000000,
+        to: data.to * 1000000,
+        spacing: data.spacing * 1000,
+        name: data.name,
+      });
 
       toast.success('Band added successfully');
       setOpen(false);
@@ -96,8 +109,11 @@ export default function AddButton() {
                 <FormItem>
                   <FormLabel>Frequency Range (From)</FormLabel>
                   <FormControl>
-                    <Input type='number' placeholder='from' {...field} />
+                    <Input type='number' placeholder='From' {...field} />
                   </FormControl>
+                  <FormDescription>
+                    Enter the start frequency of the band in MHz
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -109,8 +125,11 @@ export default function AddButton() {
                 <FormItem>
                   <FormLabel>Frequency Range (To)</FormLabel>
                   <FormControl>
-                    <Input type='number' placeholder='to' {...field} />
+                    <Input type='number' placeholder='To' {...field} />
                   </FormControl>
+                  <FormDescription>
+                    Enter the end frequency of the band in MHz
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -122,8 +141,38 @@ export default function AddButton() {
                 <FormItem>
                   <FormLabel>Channel Spacing</FormLabel>
                   <FormControl>
-                    <Input type='number' placeholder='spacing' {...field} />
+                    <Input type='number' placeholder='Spacing' {...field} />
                   </FormControl>
+                  <FormDescription>
+                    Enter the channel spacing in kHz
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='name'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Band Name</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder='Select a band name to display' />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value='VHF'>VHF</SelectItem>
+                      <SelectItem value='HF'>HF</SelectItem>
+                      <SelectItem value='UHF - I'>UHF - I</SelectItem>
+                      <SelectItem value='UHF - II'>UHF - II</SelectItem>
+                      <SelectItem value='UHF - III'>UHF - III</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
