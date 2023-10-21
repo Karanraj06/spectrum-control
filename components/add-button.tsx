@@ -93,7 +93,7 @@ export default function AddButton() {
           <PlusCircle className='h-4 w-4' /> Add Band
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-[425px]'>
+      <DialogContent className='max-h-screen overflow-y-scroll sm:max-w-[425px]'>
         <DialogHeader>
           <DialogTitle>Create New Band</DialogTitle>
           <DialogDescription>

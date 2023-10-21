@@ -161,7 +161,7 @@ const MenuItem: FC<Band> = ({ id, from, to, spacing, name }) => {
         </DropdownMenuContent>
       </DropdownMenu>
       {menuItem === 'delete' && (
-        <DialogContent className='sm:max-w-[425px]'>
+        <DialogContent className='max-h-screen overflow-y-scroll sm:max-w-[425px]'>
           <DialogHeader>
             <DialogTitle>Are you absolutely sure?</DialogTitle>
             <DialogDescription>
@@ -186,7 +186,7 @@ const MenuItem: FC<Band> = ({ id, from, to, spacing, name }) => {
         </DialogContent>
       )}
       {menuItem === 'update' && (
-        <DialogContent className='sm:max-w-[425px]'>
+        <DialogContent className='max-h-screen overflow-y-scroll sm:max-w-[425px]'>
           <DialogHeader>
             <DialogTitle>Update Band</DialogTitle>
             <DialogDescription>
