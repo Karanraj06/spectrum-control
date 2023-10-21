@@ -1,6 +1,7 @@
 'use client';
 
 import { FC, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,7 +12,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
-import { bandSchema } from '@/lib/validators/band';
+import { bandSchema } from '@/lib/validations/band';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -142,7 +143,9 @@ const MenuItem: FC<Band> = ({ id, from, to, spacing, name }) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
-          <DropdownMenuItem>Generate Frequencies</DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link href={`/bands/${id}`}>Generate Frequencies</Link>
+          </DropdownMenuItem>
           {user?.publicMetadata?.role === 'admin' && (
             <>
               <DropdownMenuSeparator />

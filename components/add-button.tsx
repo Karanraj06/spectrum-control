@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
-import { bandSchema } from '@/lib/validators/band';
+import { bandSchema } from '@/lib/validations/band';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,

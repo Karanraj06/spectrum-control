@@ -28,23 +28,27 @@ export default async function Page() {
     <>
       <UserNav />
       <Wrapper>
-        {user?.publicMetadata?.role === 'admin' && <AddButton />}
+        {user?.publicMetadata?.role === 'admin' ? (
+          <AddButton />
+        ) : (
+          <div className='m-10' />
+        )}
         <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Serial Number</TableHead>
+              <TableHead>Band Name</TableHead>
+              <TableHead>Frequency Range (From)</TableHead>
+              <TableHead>Frequency Range (To)</TableHead>
+              <TableHead>Channel Spacing</TableHead>
+              <TableHead className='text-right'>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
           {bands.length === 0 ? (
             <TableCaption>There are no bands to show.</TableCaption>
           ) : (
             <>
               <TableCaption>A list of available bands.</TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Serial Number</TableHead>
-                  <TableHead>Band Name</TableHead>
-                  <TableHead>Frequency Range (From)</TableHead>
-                  <TableHead>Frequency Range (To)</TableHead>
-                  <TableHead>Channel Spacing</TableHead>
-                  <TableHead className='text-right'></TableHead>
-                </TableRow>
-              </TableHeader>
               <TableBody>
                 {bands.map((band, idx) => (
                   <TableRow key={band.id}>

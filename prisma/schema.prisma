@@ -22,6 +22,7 @@ model Band {
 model Frequency {
   value     Int                 @id
   userId    String
+  email     String
   createdAt DateTime            @default(now())
   locations FrequencyLocation[]
 
@@ -43,6 +44,7 @@ model FrequencyLocation {
   locationLatitude  Float
   locationLongitude Float
   userId            String
+  email             String
   createdAt         DateTime  @default(now())
 
   @@id([frequencyValue, locationLatitude, locationLongitude])
