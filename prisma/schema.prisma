@@ -18,3 +18,34 @@ model Band {
   spacing Int
   name    String
 }
+
+model Frequency {
+  value     Int                 @id
+  userId    String
+  createdAt DateTime            @default(now())
+  locations FrequencyLocation[]
+
+  @@index([userId])
+}
+
+model Location {
+  latitude    Float
+  longitude   Float
+  frequencies FrequencyLocation[]
+
+  @@id([latitude, longitude])
+}
+
+model FrequencyLocation {
+  frequency         Frequency @relation(fields: [frequencyValue], references: [value])
+  frequencyValue    Int
+  location          Location  @relation(fields: [locationLatitude, locationLongitude], references: [latitude, longitude])
+  locationLatitude  Float
+  locationLongitude Float
+  userId            String
+  createdAt         DateTime  @default(now())
+
+  @@id([frequencyValue, locationLatitude, locationLongitude])
+  @@index([frequencyValue])
+  @@index([locationLatitude, locationLongitude])
+}
