@@ -16,6 +16,7 @@ import {
 import FrequencyAction from '@/components/frequency-action';
 import Navbar from '@/components/nav';
 import TablePagination from '@/components/table-pagination';
+import UserLocation from '@/components/user-location';
 import Wrapper from '@/components/wrapper';
 
 interface PageProps {
@@ -75,13 +76,13 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
       if (frequencies_map.has(i)) {
         const frequency = frequencies_map.get(i)!;
         table_rows.push({
-          frequency: frequency.value / 1000000,
+          frequency: frequency.value,
           emailAddress: frequency.email,
           createdAt: f.format(frequency.createdAt),
         });
       } else {
         table_rows.push({
-          frequency: i / 1000000,
+          frequency: i,
           emailAddress: 'N/A',
           createdAt: 'N/A',
         });
@@ -96,6 +97,7 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
       <Navbar />
       <div className='m-10' />
       <Wrapper>
+        <UserLocation />
         <Table>
           <TableHeader>
             <TableRow>
@@ -114,14 +116,14 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
                 {table_rows.map((row) => (
                   <TableRow key={row.frequency}>
                     <TableCell className='font-medium'>
-                      {row.frequency} MHz
+                      {row.frequency / 1000000} MHz
                     </TableCell>
                     <TableCell>{row.emailAddress}</TableCell>
                     <TableCell>{row.createdAt}</TableCell>
                     <TableCell className='text-right'>
                       {row.emailAddress !== 'N/A' &&
                       row.emailAddress !== email ? (
-                        <div className='inline-flex h-9 items-center justify-center rounded-md bg-[hsl(359,_100%,_97%)] px-3 text-sm font-medium text-[hsl(360,_100%,_45%)] ring-offset-background'>
+                        <div className='inline-flex h-9 w-24 items-center justify-center rounded-md bg-[hsl(359,_100%,_97%)] px-3 text-sm font-medium text-[hsl(360,_100%,_45%)] ring-offset-background'>
                           Unavaliable
                         </div>
                       ) : (

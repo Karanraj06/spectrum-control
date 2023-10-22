@@ -20,34 +20,23 @@ model Band {
 }
 
 model Frequency {
-  value     Int                 @id
+  value     Int      @id
   userId    String
   email     String
-  createdAt DateTime            @default(now())
-  locations FrequencyLocation[]
+  createdAt DateTime @default(now())
 
   @@index([userId])
 }
 
-model Location {
-  latitude    Float
-  longitude   Float
-  frequencies FrequencyLocation[]
-
-  @@id([latitude, longitude])
-}
-
 model FrequencyLocation {
-  frequency         Frequency @relation(fields: [frequencyValue], references: [value])
-  frequencyValue    Int
-  location          Location  @relation(fields: [locationLatitude, locationLongitude], references: [latitude, longitude])
-  locationLatitude  Float
-  locationLongitude Float
-  userId            String
-  email             String
-  createdAt         DateTime  @default(now())
+  id        String   @id @default(cuid())
+  value     Int
+  latitude  Float
+  longitude Float
+  userId    String
+  email     String
+  createdAt DateTime @default(now())
 
-  @@id([frequencyValue, locationLatitude, locationLongitude])
-  @@index([frequencyValue])
-  @@index([locationLatitude, locationLongitude])
+  @@index([value])
+  @@index([latitude, longitude])
 }

@@ -10,6 +10,7 @@ import {
 } from '@radix-ui/react-icons';
 
 import { Button } from './ui/button';
+import { Input } from './ui/input';
 import {
   Select,
   SelectContent,
@@ -38,6 +39,22 @@ const TablePagination: FC<TablePaginationProps> = ({
     <div className='flex w-full flex-col items-center justify-between gap-4 overflow-auto px-2 py-1 sm:flex-row sm:gap-8'>
       <div></div>
       <div className='flex flex-col items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8'>
+        <div className='flex items-center space-x-2'>
+          <p className='whitespace-nowrap text-sm font-medium'>Go to page</p>
+          <Input
+            type='number'
+            min={1}
+            max={pageCount}
+            defaultValue={pageNumber}
+            className='h-8 w-[70px]'
+            onChange={(e) => {
+              const page = parseInt(e.target.value);
+              if (page > 0 && page <= pageCount) {
+                router.push(`${pathname}?page=${page}&per_page=${perPage}`);
+              }
+            }}
+          />
+        </div>
         <div className='flex items-center space-x-2'>
           <p className='whitespace-nowrap text-sm font-medium'>Rows per page</p>
           <Select

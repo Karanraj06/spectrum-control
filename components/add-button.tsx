@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
-import { bandSchema } from '@/lib/validations/band';
+import { bandSchemaClient } from '@/lib/validations/band';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -39,7 +39,7 @@ import {
 
 import { Input } from './ui/input';
 
-type BandFormValues = z.infer<typeof bandSchema>;
+type BandFormValues = z.infer<typeof bandSchemaClient>;
 
 const defaultValues: Partial<BandFormValues> = {
   from: 0,
@@ -53,7 +53,7 @@ export default function AddButton() {
   const router = useRouter();
 
   const form = useForm<BandFormValues>({
-    resolver: zodResolver(bandSchema),
+    resolver: zodResolver(bandSchemaClient),
     defaultValues,
     mode: 'onChange',
   });

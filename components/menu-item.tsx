@@ -12,7 +12,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
-import { bandSchema } from '@/lib/validations/band';
+import { bandSchemaClient } from '@/lib/validations/band';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -49,7 +49,7 @@ import {
 
 import { Input } from './ui/input';
 
-type BandFormValues = z.infer<typeof bandSchema>;
+type BandFormValues = z.infer<typeof bandSchemaClient>;
 
 const MenuItem: FC<Band> = ({ id, from, to, spacing, name }) => {
   const [hydrated, setHydrated] = useState<boolean>(false);
@@ -67,7 +67,7 @@ const MenuItem: FC<Band> = ({ id, from, to, spacing, name }) => {
   };
 
   const form = useForm<BandFormValues>({
-    resolver: zodResolver(bandSchema),
+    resolver: zodResolver(bandSchemaClient),
     defaultValues,
     mode: 'onChange',
   });
@@ -98,7 +98,6 @@ const MenuItem: FC<Band> = ({ id, from, to, spacing, name }) => {
       setOpen(false);
       router.refresh();
     } catch (error) {
-      console.log(error);
       if (error instanceof AxiosError) {
         if (error.response?.status === 401) {
           return toast.error('You are not authorized to update a band');

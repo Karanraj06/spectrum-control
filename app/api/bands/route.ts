@@ -3,27 +3,7 @@ import { currentUser } from '@clerk/nextjs';
 import { z } from 'zod';
 
 import { db } from '@/lib/db';
-
-// For server, assuming from, to, spacing in Hz
-const bandSchema = z
-  .object({
-    from: z.coerce.number(),
-    to: z.coerce.number(),
-    spacing: z.coerce.number(),
-    name: z.string(),
-  })
-  .refine((data) => data.from < data.to, {
-    message: '(From) must be less than (To)',
-    path: ['from'],
-  })
-  .refine((data) => data.from < data.to, {
-    message: '(From) must be less than (To)',
-    path: ['to'],
-  })
-  .refine((data) => data.spacing < data.to - data.from, {
-    message: '(Spacing) must be less than (To - From)',
-    path: ['spacing'],
-  });
+import { bandSchemaServer } from '@/lib/validations/band';
 
 export async function POST(request: NextRequest) {
   const user = await currentUser();
@@ -35,7 +15,7 @@ export async function POST(request: NextRequest) {
   const data = await request.json();
 
   try {
-    const { from, to, spacing, name } = bandSchema.parse(data);
+    const { from, to, spacing, name } = bandSchemaServer.parse(data);
 
     const band = await db.band.create({
       data: { from, to, spacing, name },
