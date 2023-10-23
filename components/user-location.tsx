@@ -41,7 +41,7 @@ export default function UserLocation() {
   return (
     <Button
       variant='outline'
-      className='mb-2 mt-10 flex gap-2'
+      className='flex gap-2'
       onClick={getGeolocationData}
       disabled={isLoading}
     >

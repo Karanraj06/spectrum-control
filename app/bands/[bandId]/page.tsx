@@ -1,9 +1,13 @@
 import { FC } from 'react';
+import Link from 'next/link';
 import { currentUser } from '@clerk/nextjs';
 import { Frequency } from '@prisma/client';
+import { FunctionSquare } from 'lucide-react';
 
 import { db } from '@/lib/db';
+import { cn } from '@/lib/utils';
 import { searchParamsSchema } from '@/lib/validations/params';
+import { buttonVariants } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -95,9 +99,16 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
   return (
     <>
       <Navbar />
-      <div className='m-10' />
       <Wrapper>
-        <UserLocation />
+        <div className='mb-2 mt-10 flex flex-col items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8'>
+          <Link
+            href='/frequencies'
+            className={cn(buttonVariants({ variant: 'outline' }), 'flex gap-2')}
+          >
+            <FunctionSquare className='h-4 w-4' /> Your frequencies
+          </Link>
+          <UserLocation />
+        </div>
         <Table>
           <TableHeader>
             <TableRow>
@@ -141,13 +152,13 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
             </>
           )}
         </Table>
-        <div className='m-2' />
-        <TablePagination
-          pageNumber={fallbackPage}
-          perPage={perPageAsNumber}
-          pageCount={pageCount}
-        />
-        <div className='m-10' />
+        <div className='mb-10 mt-2'>
+          <TablePagination
+            pageNumber={fallbackPage}
+            perPage={perPageAsNumber}
+            pageCount={pageCount}
+          />
+        </div>
       </Wrapper>
     </>
   );

@@ -89,7 +89,7 @@ export default function AddButton() {
   return (
     <Dialog open={open} onOpenChange={() => setOpen(!open)}>
       <DialogTrigger asChild>
-        <Button variant='outline' className='mb-2 mt-10 flex gap-2'>
+        <Button variant='outline' className='flex gap-2'>
           <PlusCircle className='h-4 w-4' /> Add Band
         </Button>
       </DialogTrigger>

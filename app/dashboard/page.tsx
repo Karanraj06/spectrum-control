@@ -1,6 +1,10 @@
+import Link from 'next/link';
 import { currentUser } from '@clerk/nextjs';
+import { FunctionSquare } from 'lucide-react';
 
 import { db } from '@/lib/db';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -28,11 +32,15 @@ export default async function Page() {
     <>
       <UserNav />
       <Wrapper>
-        {user?.publicMetadata?.role === 'admin' ? (
-          <AddButton />
-        ) : (
-          <div className='m-10' />
-        )}
+        <div className='mb-2 mt-10 flex flex-col items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8'>
+          <Link
+            href='/frequencies'
+            className={cn(buttonVariants({ variant: 'outline' }), 'flex gap-2')}
+          >
+            <FunctionSquare className='h-4 w-4' /> Your frequencies
+          </Link>
+          {user?.publicMetadata?.role === 'admin' && <AddButton />}
+        </div>
         <Table>
           <TableHeader>
             <TableRow>

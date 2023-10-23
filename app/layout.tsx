@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://spectrum-control.vercel.app'),
   title: { default: 'Spectrum Control', template: '%s | Spectrum Control' },
   description:
     'Automated Spectrum Management System - Spectrum Control allows you to effortlessly manage and allocate frequencies',
