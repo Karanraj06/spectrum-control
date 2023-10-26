@@ -54,7 +54,7 @@ export default function DeleteAllButton() {
           <DialogTitle>Are you absolutely sure?</DialogTitle>
           <DialogDescription>
             This action cannot be undone. Are you sure you want to permanently
-            delete this band from our servers?
+            delete all frequencies from our servers?
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
