@@ -23,6 +23,8 @@ model Frequency {
   value     Int      @id
   userId    String
   email     String
+  latitude  Float
+  longitude Float
   createdAt DateTime @default(now())
 
   @@index([userId])

@@ -32,7 +32,7 @@ export default async function Page() {
     <>
       <UserNav />
       <Wrapper>
-        <div className='mb-2 mt-10 flex flex-col items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8'>
+        <div className='mb-2 mt-10 flex flex-col items-center gap-4 px-2 py-1 sm:flex-row sm:gap-6 lg:gap-8'>
           <Link
             href='/frequencies'
             className={cn(buttonVariants({ variant: 'outline' }), 'flex gap-2')}

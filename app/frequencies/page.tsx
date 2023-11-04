@@ -46,7 +46,10 @@ const Page: FC<PageProps> = async ({ searchParams }) => {
   // Number of items to skip
   const offset = fallbackPage > 0 ? (fallbackPage - 1) * limit : 0;
 
-  const f = new Intl.DateTimeFormat('en-uk', { dateStyle: 'short' });
+  const f = new Intl.DateTimeFormat('en-uk', {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  });
 
   const { frequencies, pageCount } = await db.$transaction(async (db) => {
     const total_frequencies = await db.frequency.count({
@@ -69,13 +72,14 @@ const Page: FC<PageProps> = async ({ searchParams }) => {
     <>
       <Navbar />
       <Wrapper>
-        <div className='mb-2 mt-10'>
+        <div className='mb-2 mt-10 px-2 py-1'>
           <DeleteAllButton />
         </div>
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Frequency</TableHead>
+              <TableHead>Location (Latitude, Longitude)</TableHead>
               <TableHead>Created At</TableHead>
               <TableHead className='text-right'>Actions</TableHead>
             </TableRow>
@@ -91,6 +95,7 @@ const Page: FC<PageProps> = async ({ searchParams }) => {
                     <TableCell className='font-medium'>
                       {frequency.value / 1000000} MHz
                     </TableCell>
+                    <TableCell>{`${frequency.latitude}, ${frequency.longitude}`}</TableCell>
                     <TableCell>{f.format(frequency.createdAt)}</TableCell>
                     <TableCell className='text-right'>
                       <UnacquireButton frequency={frequency.value} />

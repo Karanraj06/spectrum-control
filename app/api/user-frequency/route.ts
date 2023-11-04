@@ -19,7 +19,9 @@ export async function POST(request: NextRequest) {
       frequencySchema.parse(data);
 
     const frequency_location = await db.$transaction(async (db) => {
-      await db.frequency.create({ data: { value, userId, email } });
+      await db.frequency.create({
+        data: { value, userId, email, latitude, longitude },
+      });
 
       const frequency_location = await db.frequencyLocation.create({
         data: { value, userId, email, latitude, longitude },

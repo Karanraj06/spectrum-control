@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/table';
 import FrequencyAction from '@/components/frequency-action';
 import Navbar from '@/components/nav';
+import SearchFrequency from '@/components/search-frequency';
 import TablePagination from '@/components/table-pagination';
 import UserLocation from '@/components/user-location';
 import Wrapper from '@/components/wrapper';
@@ -54,53 +55,60 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
   // Number of items to skip
   const offset = fallbackPage > 0 ? (fallbackPage - 1) * limit : 0;
 
-  const { table_rows, pageCount } = await db.$transaction(async (db) => {
-    const band = await db.band.findUnique({ where: { id: params.bandId } });
-    const { from, to, spacing } = band!;
+  const { table_rows, pageCount, from, to, spacing } = await db.$transaction(
+    async (db) => {
+      const band = await db.band.findUnique({ where: { id: params.bandId } });
+      const { from, to, spacing } = band!;
 
-    const pageCount = Math.ceil(
-      (Math.floor((to - from) / spacing) + 1) / limit
-    );
+      const pageCount = Math.ceil(
+        (Math.floor((to - from) / spacing) + 1) / limit
+      );
 
-    const start = from + offset * spacing;
-    const _end = from + (offset + limit - 1) * spacing;
-    const end = _end > to ? to : _end;
+      const start = from + offset * spacing;
+      const _end = from + (offset + limit - 1) * spacing;
+      const end = _end > to ? to : _end;
 
-    const frequencies = await db.frequency.findMany({
-      where: { value: { gte: start, lte: end } },
-    });
+      const frequencies = await db.frequency.findMany({
+        where: { value: { gte: start, lte: end } },
+      });
 
-    const frequencies_map = new Map<number, Frequency>();
-    frequencies.forEach((f) => frequencies_map.set(f.value, f));
+      const frequencies_map = new Map<number, Frequency>();
+      frequencies.forEach((f) => frequencies_map.set(f.value, f));
 
-    const f = new Intl.DateTimeFormat('en-uk', { dateStyle: 'short' });
+      const f = new Intl.DateTimeFormat('en-uk', {
+        dateStyle: 'short',
+        timeStyle: 'short',
+      });
 
-    const table_rows = [];
-    for (let i = start; i <= end; i += spacing) {
-      if (frequencies_map.has(i)) {
-        const frequency = frequencies_map.get(i)!;
-        table_rows.push({
-          frequency: frequency.value,
-          emailAddress: frequency.email,
-          createdAt: f.format(frequency.createdAt),
-        });
-      } else {
-        table_rows.push({
-          frequency: i,
-          emailAddress: 'N/A',
-          createdAt: 'N/A',
-        });
+      const table_rows = [];
+      for (let i = start; i <= end; i += spacing) {
+        if (frequencies_map.has(i)) {
+          const frequency = frequencies_map.get(i)!;
+          table_rows.push({
+            frequency: frequency.value,
+            emailAddress: frequency.email,
+            location: `${frequency.latitude}, ${frequency.longitude}`,
+            createdAt: f.format(frequency.createdAt),
+          });
+        } else {
+          table_rows.push({
+            frequency: i,
+            emailAddress: 'N/A',
+            location: 'N/A',
+            createdAt: 'N/A',
+          });
+        }
       }
-    }
 
-    return { table_rows, pageCount };
-  });
+      return { table_rows, pageCount, from, to, spacing };
+    }
+  );
 
   return (
     <>
       <Navbar />
       <Wrapper>
-        <div className='mb-2 mt-10 flex flex-col items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8'>
+        <div className='mb-2 mt-10 flex flex-col items-center gap-4 px-2 py-1 sm:flex-row sm:gap-6 lg:gap-8'>
           <Link
             href='/frequencies'
             className={cn(buttonVariants({ variant: 'outline' }), 'flex gap-2')}
@@ -109,11 +117,20 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
           </Link>
           <UserLocation />
         </div>
+        <div className='my-4'>
+          <SearchFrequency
+            perPage={perPageAsNumber}
+            from={from}
+            to={to}
+            spacing={spacing}
+          />
+        </div>
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Frequency</TableHead>
               <TableHead>User</TableHead>
+              <TableHead>Location (Latitude, Longitude)</TableHead>
               <TableHead>Created At</TableHead>
               <TableHead className='text-right'>Actions</TableHead>
             </TableRow>
@@ -130,6 +147,7 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
                       {row.frequency / 1000000} MHz
                     </TableCell>
                     <TableCell>{row.emailAddress}</TableCell>
+                    <TableCell>{row.location}</TableCell>
                     <TableCell>{row.createdAt}</TableCell>
                     <TableCell className='text-right'>
                       {row.emailAddress !== 'N/A' &&
@@ -155,7 +173,7 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
         <div className='mb-10 mt-2'>
           <TablePagination
             pageNumber={fallbackPage}
-            perPage={perPageAsNumber}
+            perPage={limit}
             pageCount={pageCount}
           />
         </div>
