@@ -33,10 +33,10 @@ model Frequency {
 model FrequencyLocation {
   id        String   @id @default(cuid())
   value     Int
-  latitude  Float
-  longitude Float
   userId    String
   email     String
+  latitude  Float
+  longitude Float
   createdAt DateTime @default(now())
 
   @@index([value])

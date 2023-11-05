@@ -19,6 +19,8 @@ import {
 } from '@/components/ui/table';
 import FrequencyAction from '@/components/frequency-action';
 import Navbar from '@/components/nav';
+import RangeAllocate from '@/components/range-allocate';
+import RangeDelete from '@/components/range-delete';
 import SearchFrequency from '@/components/search-frequency';
 import TablePagination from '@/components/table-pagination';
 import UserLocation from '@/components/user-location';
@@ -123,6 +125,22 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
             from={from}
             to={to}
             spacing={spacing}
+          />
+        </div>
+        <div className='my-4 flex flex-col items-center gap-4 px-2 py-1 sm:flex-row sm:gap-6 lg:gap-8'>
+          <RangeAllocate
+            from={from}
+            to={to}
+            spacing={spacing}
+            userId={user.id}
+            email={email}
+          />
+          <RangeDelete
+            from={from}
+            to={to}
+            spacing={spacing}
+            userId={user.id}
+            email={email}
           />
         </div>
         <Table>
