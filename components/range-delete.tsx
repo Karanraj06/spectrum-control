@@ -2,7 +2,7 @@
 
 import { FC, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { rangeDelete } from '@/server/actions';
+import { rangeDelete } from '@/actions/range-delete';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -104,12 +104,12 @@ const RangeDelete: FC<RangeDeleteProps> = ({
     <Dialog open={open} onOpenChange={() => setOpen(!open)}>
       <DialogTrigger asChild>
         <Button variant='outline' className='flex gap-2'>
-          Delete in Range
+          Unacquire in Range
         </Button>
       </DialogTrigger>
       <DialogContent className='max-h-screen overflow-y-scroll sm:max-w-[425px]'>
         <DialogHeader>
-          <DialogTitle>Delete in Range</DialogTitle>
+          <DialogTitle>Unacquire in Range</DialogTitle>
           <DialogDescription>
             Delete all acquired frequencies in a range. Click submit when
             you&apos;re done.

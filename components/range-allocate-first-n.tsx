@@ -2,7 +2,7 @@
 
 import { FC, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { rangeAllocate } from '@/actions/range-allocate';
+import { rangeAllocateFirstN } from '@/actions/range-allocate-first-n';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -32,7 +32,7 @@ import {
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 
-interface RangeAllocateProps {
+interface RangeAllocateFirstNProps {
   from: number;
   to: number;
   spacing: number;
@@ -40,7 +40,7 @@ interface RangeAllocateProps {
   email: string;
 }
 
-const RangeAllocate: FC<RangeAllocateProps> = ({
+const RangeAllocateFirstN: FC<RangeAllocateFirstNProps> = ({
   from,
   to,
   spacing,
@@ -53,7 +53,7 @@ const RangeAllocate: FC<RangeAllocateProps> = ({
 
   const { latitude, longitude } = useLocationStore();
 
-  const rangeAllocateSchema = z
+  const rangeAllocateFirstNSchema = z
     .object({
       from: z.coerce
         .number()
@@ -63,6 +63,7 @@ const RangeAllocate: FC<RangeAllocateProps> = ({
         .number()
         .min(from / 1000000)
         .max(to / 1000000),
+      n: z.coerce.number().int().min(1),
     })
     .refine((data) => data.from < data.to, {
       message: '(From) must be less than (To)',
@@ -73,21 +74,23 @@ const RangeAllocate: FC<RangeAllocateProps> = ({
       path: ['to'],
     });
 
-  type RangeAllocateFormValues = z.infer<typeof rangeAllocateSchema>;
+  type RangeAllocateFirstNFormValues = z.infer<
+    typeof rangeAllocateFirstNSchema
+  >;
 
-  const form = useForm<RangeAllocateFormValues>({
-    resolver: zodResolver(rangeAllocateSchema),
+  const form = useForm<RangeAllocateFirstNFormValues>({
+    resolver: zodResolver(rangeAllocateFirstNSchema),
     mode: 'onChange',
   });
 
-  async function onSubmit(data: RangeAllocateFormValues) {
+  async function onSubmit(data: RangeAllocateFirstNFormValues) {
     if (!latitude || !longitude) {
       return toast.error('Allow access to your location to continue');
     }
 
     setIsLoading(true);
 
-    const res = await rangeAllocate({
+    const res = await rangeAllocateFirstN({
       from,
       to,
       spacing,
@@ -97,6 +100,7 @@ const RangeAllocate: FC<RangeAllocateProps> = ({
       email,
       latitude,
       longitude,
+      n: data.n,
     });
 
     if ('error' in res) {
@@ -114,15 +118,15 @@ const RangeAllocate: FC<RangeAllocateProps> = ({
     <Dialog open={open} onOpenChange={() => setOpen(!open)}>
       <DialogTrigger asChild>
         <Button variant='outline' className='flex gap-2'>
-          Acquire in Range
+          Choose in Range
         </Button>
       </DialogTrigger>
       <DialogContent className='max-h-screen overflow-y-scroll sm:max-w-[425px]'>
         <DialogHeader>
-          <DialogTitle>Acquire in Range</DialogTitle>
+          <DialogTitle>Acquire first n in Range</DialogTitle>
           <DialogDescription>
-            Acquire all available frequencies in a range. Click submit when
-            you&apos;re done.
+            Acquire the first n available frequencies in a range. Click submit
+            when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -159,6 +163,19 @@ const RangeAllocate: FC<RangeAllocateProps> = ({
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name='n'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Number of frequencies to allocate</FormLabel>
+                  <FormControl>
+                    <Input type='number' placeholder='n' {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <DialogFooter>
               <Button type='submit' className='w-20' disabled={isLoading}>
                 {isLoading ? (
@@ -175,4 +192,4 @@ const RangeAllocate: FC<RangeAllocateProps> = ({
   );
 };
 
-export default RangeAllocate;
+export default RangeAllocateFirstN;

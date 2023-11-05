@@ -20,6 +20,7 @@ import {
 import FrequencyAction from '@/components/frequency-action';
 import Navbar from '@/components/nav';
 import RangeAllocate from '@/components/range-allocate';
+import RangeAllocateFirstN from '@/components/range-allocate-first-n';
 import RangeDelete from '@/components/range-delete';
 import SearchFrequency from '@/components/search-frequency';
 import TablePagination from '@/components/table-pagination';
@@ -80,6 +81,7 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
       const f = new Intl.DateTimeFormat('en-uk', {
         dateStyle: 'short',
         timeStyle: 'short',
+        timeZone: 'Asia/Kolkata',
       });
 
       const table_rows = [];
@@ -136,6 +138,13 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
             email={email}
           />
           <RangeDelete
+            from={from}
+            to={to}
+            spacing={spacing}
+            userId={user.id}
+            email={email}
+          />
+          <RangeAllocateFirstN
             from={from}
             to={to}
             spacing={spacing}
