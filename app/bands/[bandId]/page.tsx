@@ -22,6 +22,7 @@ import Navbar from '@/components/nav';
 import RangeAllocate from '@/components/range-allocate';
 import RangeAllocateFirstN from '@/components/range-allocate-first-n';
 import RangeDelete from '@/components/range-delete';
+import RedirectButton from '@/components/redirect-button';
 import SearchFrequency from '@/components/search-frequency';
 import TablePagination from '@/components/table-pagination';
 import UserLocation from '@/components/user-location';
@@ -171,7 +172,7 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
                 {table_rows.map((row) => (
                   <TableRow key={row.frequency}>
                     <TableCell className='font-medium'>
-                      {row.frequency / 1000000} MHz
+                      <RedirectButton value={row.frequency} />
                     </TableCell>
                     <TableCell>{row.emailAddress}</TableCell>
                     <TableCell>{row.location}</TableCell>
