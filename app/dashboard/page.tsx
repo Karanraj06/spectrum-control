@@ -15,6 +15,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import AddButton from '@/components/add-button';
+import AdminDeleteButton from '@/components/admin-delete-button';
 import MenuItem from '@/components/menu-item';
 import UserNav from '@/components/user-nav';
 import Wrapper from '@/components/wrapper';
@@ -40,6 +41,7 @@ export default async function Page() {
             <FunctionSquare className='h-4 w-4' /> Your frequencies
           </Link>
           {user?.publicMetadata?.role === 'admin' && <AddButton />}
+          {user?.publicMetadata?.role === 'admin' && <AdminDeleteButton />}
         </div>
         <Table>
           <TableHeader>

@@ -7,7 +7,7 @@ import { FunctionSquare } from 'lucide-react';
 import { db } from '@/lib/db';
 import { cn } from '@/lib/utils';
 import { searchParamsSchema } from '@/lib/validations/params';
-import { buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -22,7 +22,6 @@ import Navbar from '@/components/nav';
 import RangeAllocate from '@/components/range-allocate';
 import RangeAllocateFirstN from '@/components/range-allocate-first-n';
 import RangeDelete from '@/components/range-delete';
-import RedirectButton from '@/components/redirect-button';
 import SearchFrequency from '@/components/search-frequency';
 import TablePagination from '@/components/table-pagination';
 import UserLocation from '@/components/user-location';
@@ -172,7 +171,15 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
                 {table_rows.map((row) => (
                   <TableRow key={row.frequency}>
                     <TableCell className='font-medium'>
-                      <RedirectButton value={row.frequency} />
+                      <Link
+                        className={buttonVariants({
+                          variant: 'ghost',
+                          className: 'hover:bg-neutral-200',
+                        })}
+                        href={`/frequencies/${row.frequency}`}
+                      >
+                        {row.frequency / 1000000} MHz
+                      </Link>
                     </TableCell>
                     <TableCell>{row.emailAddress}</TableCell>
                     <TableCell>{row.location}</TableCell>

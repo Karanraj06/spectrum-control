@@ -6,14 +6,19 @@ import { db } from '@/lib/db';
 
 export async function DELETE(request: NextRequest) {
   const user = await currentUser();
+  const searchParams = request.nextUrl.searchParams;
+  const role = searchParams.get('role');
 
-  if (!user) {
+  if (!user || (role === 'admin' && user.publicMetadata?.role !== 'admin')) {
     return new NextResponse('Unauthorized', { status: 401 });
   }
 
   try {
-    await db.frequency.deleteMany({ where: { userId: user.id } });
-
+    if (role === 'admin') {
+      await db.frequency.deleteMany({});
+    } else {
+      await db.frequency.deleteMany({ where: { userId: user.id } });
+    }
     return new NextResponse(null, { status: 204 });
   } catch (error) {
     if (error instanceof z.ZodError) {
