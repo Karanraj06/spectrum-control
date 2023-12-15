@@ -2,13 +2,14 @@
 
 import { FC, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { rangeDelete } from '@/actions/range-delete';
+import { rangeAllocate } from '@/actions/range-allocate';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -27,23 +28,20 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-
-interface RangeDeleteProps {
+interface DebarRangeProps {
   from: number;
   to: number;
   spacing: number;
-  userId: string;
 }
 
-const RangeDelete: FC<RangeDeleteProps> = ({ from, to, spacing, userId }) => {
+const DebarRange: FC<DebarRangeProps> = ({ from, to, spacing }) => {
   const [open, setOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
-  const rangeDeleteSchema = z
+  const DebarRangeSchema = z
     .object({
       from: z.coerce
         .number()
@@ -54,40 +52,43 @@ const RangeDelete: FC<RangeDeleteProps> = ({ from, to, spacing, userId }) => {
         .min(from / 1000000)
         .max(to / 1000000),
     })
-    .refine((data) => data.from < data.to, {
-      message: '(From) must be less than (To)',
+    .refine((data) => data.from <= data.to, {
+      message: '(From) must be less than or equal to (To)',
       path: ['from'],
     })
-    .refine((data) => data.from < data.to, {
-      message: '(From) must be less than (To)',
+    .refine((data) => data.from <= data.to, {
+      message: '(From) must be less than or equal to (To)',
       path: ['to'],
     });
 
-  type RangeDeleteFormValues = z.infer<typeof rangeDeleteSchema>;
+  type DebarRangeFormValues = z.infer<typeof DebarRangeSchema>;
 
-  const form = useForm<RangeDeleteFormValues>({
-    resolver: zodResolver(rangeDeleteSchema),
+  const form = useForm<DebarRangeFormValues>({
+    resolver: zodResolver(DebarRangeSchema),
     mode: 'onChange',
   });
 
-  async function onSubmit(data: RangeDeleteFormValues) {
+  async function onSubmit(data: DebarRangeFormValues) {
     setIsLoading(true);
 
-    const res = await rangeDelete({
+    const res = await rangeAllocate({
       from,
       to,
       spacing,
       start: data.from * 1000000,
       end: data.to * 1000000,
-      userId,
+      userId: 'forbidden',
+      email: 'forbidden',
+      latitude: -1,
+      longitude: -1,
     });
 
-    if (res && 'error' in res) {
+    if ('error' in res) {
       setIsLoading(false);
       return toast.error(res.error);
     }
 
-    toast.success('Frequencies deleted successfully');
+    toast.success('Frequencies debarred successfully');
     setOpen(false);
     router.refresh();
     setIsLoading(false);
@@ -97,14 +98,14 @@ const RangeDelete: FC<RangeDeleteProps> = ({ from, to, spacing, userId }) => {
     <Dialog open={open} onOpenChange={() => setOpen(!open)}>
       <DialogTrigger asChild>
         <Button variant='outline' className='flex gap-2'>
-          Unacquire in Range
+          Debar in Range
         </Button>
       </DialogTrigger>
       <DialogContent className='max-h-screen overflow-y-scroll sm:max-w-[425px]'>
         <DialogHeader>
-          <DialogTitle>Unacquire in Range</DialogTitle>
+          <DialogTitle>Debar in Range</DialogTitle>
           <DialogDescription>
-            Delete all acquired frequencies in a range. Click submit when
+            Debar all available frequencies in a range. Click submit when
             you&apos;re done.
           </DialogDescription>
         </DialogHeader>
@@ -158,4 +159,4 @@ const RangeDelete: FC<RangeDeleteProps> = ({ from, to, spacing, userId }) => {
   );
 };
 
-export default RangeDelete;
+export default DebarRange;

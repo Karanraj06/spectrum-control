@@ -28,6 +28,9 @@ import UserLocation from '@/components/user-location';
 import UserNav from '@/components/user-nav';
 import Wrapper from '@/components/wrapper';
 
+import AllowRange from '../components/allow-range';
+import DebarRange from '../components/debar-range';
+
 interface PageProps {
   params: { bandId: string };
   searchParams: { [key: string]: string | string[] | undefined };
@@ -89,6 +92,17 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
       for (let i = start; i <= end; i += spacing) {
         if (frequencies_map.has(i)) {
           const frequency = frequencies_map.get(i)!;
+
+          if (frequency.userId === 'forbidden') {
+            table_rows.push({
+              frequency: i,
+              emailAddress: frequency.email,
+              location: 'N/A',
+              createdAt: 'N/A',
+            });
+            continue;
+          }
+
           table_rows.push({
             frequency: frequency.value,
             emailAddress: frequency.email,
@@ -142,13 +156,7 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
             userId={user.id}
             email={email}
           />
-          <RangeDelete
-            from={from}
-            to={to}
-            spacing={spacing}
-            userId={user.id}
-            email={email}
-          />
+          <RangeDelete from={from} to={to} spacing={spacing} userId={user.id} />
           <RangeAllocateFirstN
             from={from}
             to={to}
@@ -156,6 +164,10 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
             userId={user.id}
             email={email}
           />
+        </div>
+        <div className='my-4 flex flex-col items-center gap-4 px-2 py-1 sm:flex-row sm:gap-6 lg:gap-8'>
+          <DebarRange from={from} to={to} spacing={spacing} />
+          <AllowRange from={from} to={to} spacing={spacing} />
         </div>
         <Table>
           <TableHeader>
@@ -187,7 +199,8 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
                       </Link>
                     </TableCell>
                     <TableCell>
-                      {row.emailAddress !== 'N/A' ? (
+                      {row.emailAddress !== 'N/A' &&
+                      row.emailAddress !== 'forbidden' ? (
                         <Link
                           href={`/profile/${row.userId}`}
                           className='hover:underline'
@@ -195,14 +208,18 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
                           {row.emailAddress}
                         </Link>
                       ) : (
-                        row.emailAddress
+                        'N/A'
                       )}
                     </TableCell>
                     <TableCell>{row.location}</TableCell>
                     <TableCell>{row.createdAt}</TableCell>
                     <TableCell className='text-right'>
-                      {row.emailAddress !== 'N/A' &&
-                      row.emailAddress !== email ? (
+                      {row.emailAddress === 'forbidden' ? (
+                        <div className='inline-flex h-9 w-24 items-center justify-center rounded-md bg-sky-100 px-3 text-sm font-medium text-blue-500 ring-offset-background'>
+                          Forbidden
+                        </div>
+                      ) : row.emailAddress !== 'N/A' &&
+                        row.emailAddress !== email ? (
                         <div className='inline-flex h-9 w-24 items-center justify-center rounded-md bg-[hsl(359,_100%,_97%)] px-3 text-sm font-medium text-[hsl(360,_100%,_45%)] ring-offset-background'>
                           Unavaliable
                         </div>

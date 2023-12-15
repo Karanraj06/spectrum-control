@@ -15,15 +15,15 @@ const rangeAllocateSchema = z
     start: z.coerce.number(),
     end: z.coerce.number(),
     userId: z.string(),
-    email: z.string().email(),
-    latitude: z.coerce.number(),
-    longitude: z.coerce.number(),
+    email: z.string(),
+    latitude: z.coerce.number().min(-90).max(90),
+    longitude: z.coerce.number().min(-180).max(180),
   })
   .refine(
     (data) =>
       data.from < data.to &&
       data.spacing < data.to - data.from &&
-      data.start < data.end &&
+      data.start <= data.end &&
       data.start >= data.from &&
       data.start <= data.to &&
       data.end >= data.from &&
@@ -65,7 +65,9 @@ export async function rangeAllocate(
       }));
 
       await db.frequency.createMany({ data: newData });
-      await db.frequencyLocation.createMany({ data: newData });
+      if (userId !== 'forbidden') {
+        await db.frequencyLocation.createMany({ data: newData });
+      }
 
       return availableFrequencies;
     });
