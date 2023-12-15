@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { auth, UserButton } from '@clerk/nextjs';
-import { ArrowRight } from 'lucide-react';
 
 import { buttonVariants } from '@/components/ui/button';
 import Wrapper from '@/components/wrapper';
@@ -21,13 +20,22 @@ export default function UserNav() {
           </Link>
           <div className='flex items-center space-x-4'>
             <Link
-              href='/'
+              href='/settings'
               className={buttonVariants({
                 variant: 'ghost',
                 size: 'sm',
               })}
             >
-              Documentation
+              Settings
+            </Link>
+            <Link
+              href='/dashboard'
+              className={buttonVariants({
+                variant: 'ghost',
+                size: 'sm',
+              })}
+            >
+              Dashboard
             </Link>
             <UserButton afterSignOutUrl='/' />
           </div>

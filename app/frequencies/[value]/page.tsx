@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { db } from '@/lib/db';
@@ -12,8 +13,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import Navbar from '@/components/nav';
+import GoBack from '@/components/go-back';
 import TablePagination from '@/components/table-pagination';
+import UserNav from '@/components/user-nav';
 import Wrapper from '@/components/wrapper';
 
 interface PageProps {
@@ -65,8 +67,11 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
 
   return (
     <>
-      <Navbar />
+      <UserNav />
       <Wrapper>
+        <div className='mt-10 px-2'>
+          <GoBack />
+        </div>
         <p className='mb-2 mt-10 px-2 py-1 text-center font-medium'>
           Allocation data for {value / 1000000} MHz
         </p>
@@ -86,7 +91,14 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
               <TableBody>
                 {rows.map((row) => (
                   <TableRow key={row.value}>
-                    <TableCell>{row.email}</TableCell>
+                    <TableCell>
+                      <Link
+                        href={`/profile/${row.userId}`}
+                        className='hover:underline'
+                      >
+                        {row.email}
+                      </Link>
+                    </TableCell>
                     <TableCell>{`${row.latitude}, ${row.longitude}`}</TableCell>
                     <TableCell>{f.format(row.createdAt)}</TableCell>
                   </TableRow>

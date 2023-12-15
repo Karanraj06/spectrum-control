@@ -1,10 +1,8 @@
 import { FC } from 'react';
 import { currentUser } from '@clerk/nextjs';
-import { Delete, PlusCircle } from 'lucide-react';
 
 import { db } from '@/lib/db';
 import { searchParamsSchema } from '@/lib/validations/params';
-import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -15,9 +13,10 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import DeleteAllButton from '@/components/delete-all-button';
-import Navbar from '@/components/nav';
+import GoBack from '@/components/go-back';
 import TablePagination from '@/components/table-pagination';
 import UnacquireButton from '@/components/unacquire-button';
+import UserNav from '@/components/user-nav';
 import Wrapper from '@/components/wrapper';
 
 interface PageProps {
@@ -70,9 +69,12 @@ const Page: FC<PageProps> = async ({ searchParams }) => {
 
   return (
     <>
-      <Navbar />
+      <UserNav />
       <Wrapper>
-        <div className='mb-2 mt-10 px-2 py-1'>
+        <div className='mt-10 px-2'>
+          <GoBack />
+        </div>
+        <div className='my-2 px-2 py-1'>
           <DeleteAllButton />
         </div>
         <Table>

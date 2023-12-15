@@ -7,7 +7,7 @@ import { FunctionSquare } from 'lucide-react';
 import { db } from '@/lib/db';
 import { cn } from '@/lib/utils';
 import { searchParamsSchema } from '@/lib/validations/params';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -18,13 +18,14 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import FrequencyAction from '@/components/frequency-action';
-import Navbar from '@/components/nav';
+import GoBack from '@/components/go-back';
 import RangeAllocate from '@/components/range-allocate';
 import RangeAllocateFirstN from '@/components/range-allocate-first-n';
 import RangeDelete from '@/components/range-delete';
 import SearchFrequency from '@/components/search-frequency';
 import TablePagination from '@/components/table-pagination';
 import UserLocation from '@/components/user-location';
+import UserNav from '@/components/user-nav';
 import Wrapper from '@/components/wrapper';
 
 interface PageProps {
@@ -91,6 +92,7 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
           table_rows.push({
             frequency: frequency.value,
             emailAddress: frequency.email,
+            userId: frequency.userId,
             location: `${frequency.latitude}, ${frequency.longitude}`,
             createdAt: f.format(frequency.createdAt),
           });
@@ -110,9 +112,12 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
 
   return (
     <>
-      <Navbar />
+      <UserNav />
       <Wrapper>
-        <div className='mb-2 mt-10 flex flex-col items-center gap-4 px-2 py-1 sm:flex-row sm:gap-6 lg:gap-8'>
+        <div className='mt-10 px-2'>
+          <GoBack />
+        </div>
+        <div className='my-2 flex flex-col items-center gap-4 px-2 py-1 sm:flex-row sm:gap-6 lg:gap-8'>
           <Link
             href='/frequencies'
             className={cn(buttonVariants({ variant: 'outline' }), 'flex gap-2')}
@@ -181,7 +186,18 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
                         {row.frequency / 1000000} MHz
                       </Link>
                     </TableCell>
-                    <TableCell>{row.emailAddress}</TableCell>
+                    <TableCell>
+                      {row.emailAddress !== 'N/A' ? (
+                        <Link
+                          href={`/profile/${row.userId}`}
+                          className='hover:underline'
+                        >
+                          {row.emailAddress}
+                        </Link>
+                      ) : (
+                        row.emailAddress
+                      )}
+                    </TableCell>
                     <TableCell>{row.location}</TableCell>
                     <TableCell>{row.createdAt}</TableCell>
                     <TableCell className='text-right'>
