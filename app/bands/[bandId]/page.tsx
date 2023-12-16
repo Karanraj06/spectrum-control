@@ -20,7 +20,6 @@ import {
 import FrequencyAction from '@/components/frequency-action';
 import GoBack from '@/components/go-back';
 import RangeAllocate from '@/components/range-allocate';
-import RangeAllocateFirstN from '@/components/range-allocate-first-n';
 import RangeDelete from '@/components/range-delete';
 import SearchFrequency from '@/components/search-frequency';
 import TablePagination from '@/components/table-pagination';
@@ -29,6 +28,7 @@ import UserNav from '@/components/user-nav';
 import Wrapper from '@/components/wrapper';
 
 import AllowRange from '../components/allow-range';
+import ChooseRange from '../components/choose-range';
 import DebarRange from '../components/debar-range';
 
 interface PageProps {
@@ -62,10 +62,10 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
   // Number of items to skip
   const offset = fallbackPage > 0 ? (fallbackPage - 1) * limit : 0;
 
-  const { table_rows, pageCount, from, to, spacing } = await db.$transaction(
-    async (db) => {
+  const { table_rows, pageCount, from, to, spacing, name } =
+    await db.$transaction(async (db) => {
       const band = await db.band.findUnique({ where: { id: params.bandId } });
-      const { from, to, spacing } = band!;
+      const { from, to, spacing, name } = band!;
 
       const pageCount = Math.ceil(
         (Math.floor((to - from) / spacing) + 1) / limit
@@ -120,9 +120,8 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
         }
       }
 
-      return { table_rows, pageCount, from, to, spacing };
-    }
-  );
+      return { table_rows, pageCount, from, to, spacing, name };
+    });
 
   return (
     <>
@@ -157,12 +156,13 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
             email={email}
           />
           <RangeDelete from={from} to={to} spacing={spacing} userId={user.id} />
-          <RangeAllocateFirstN
+          <ChooseRange
             from={from}
             to={to}
             spacing={spacing}
             userId={user.id}
             email={email}
+            name={name}
           />
         </div>
         <div className='my-4 flex flex-col items-center gap-4 px-2 py-1 sm:flex-row sm:gap-6 lg:gap-8'>

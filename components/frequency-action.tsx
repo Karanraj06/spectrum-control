@@ -39,7 +39,7 @@ const FrequencyAction: FC<FrequencyActionProps> = ({
   const { latitude, longitude } = useLocationStore();
 
   async function handleOnClick() {
-    if ((!latitude || !longitude) && emailAddress === 'N/A') {
+    if ((latitude === null || longitude === null) && emailAddress === 'N/A') {
       return toast.error('Allow access to your location to continue');
     }
 

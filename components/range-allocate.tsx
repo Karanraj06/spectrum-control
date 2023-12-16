@@ -81,7 +81,7 @@ const RangeAllocate: FC<RangeAllocateProps> = ({
   });
 
   async function onSubmit(data: RangeAllocateFormValues) {
-    if (!latitude || !longitude) {
+    if (latitude === null || longitude === null) {
       return toast.error('Allow access to your location to continue');
     }
 

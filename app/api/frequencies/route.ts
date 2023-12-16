@@ -15,7 +15,13 @@ export async function DELETE(request: NextRequest) {
 
   try {
     if (role === 'admin') {
-      await db.frequency.deleteMany({});
+      await db.frequency.deleteMany({
+        where: {
+          userId: {
+            not: 'forbidden',
+          },
+        },
+      });
     } else {
       await db.frequency.deleteMany({ where: { userId: user.id } });
     }

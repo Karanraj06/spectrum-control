@@ -5,7 +5,7 @@ import { clerkClient, currentUser } from '@clerk/nextjs';
 
 import { buttonVariants } from '@/components/ui/button';
 import GoBack from '@/components/go-back';
-import Navbar from '@/components/nav';
+import UserNav from '@/components/user-nav';
 import Wrapper from '@/components/wrapper';
 
 interface PageProps {
@@ -29,7 +29,7 @@ const Page: FC<PageProps> = async ({ params }) => {
 
   return (
     <>
-      <Navbar />
+      <UserNav />
       <Wrapper>
         <div className='mt-10 px-2'>
           <GoBack />

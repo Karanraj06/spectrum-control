@@ -45,7 +45,7 @@ export default function UserLocation() {
     mode: 'onChange',
   });
 
-  if (latitude && longitude) {
+  if (latitude !== null && longitude !== null) {
     return null;
   }
 
